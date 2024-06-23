@@ -6,7 +6,7 @@ import time
 
 headers = {
     "accept": "application/json",
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkMDZiMGJkMzBmNjdkMTlkYTA3MDQzY2MyYjdlN2ZmMCIsInN1YiI6IjYzOTc1MzZjOGE4OGIyMDA3ZDkzYTVmYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.weVhOAz4IBYejajHEa9VNlweNr0lGRlXa9VM4trYBeo"
+    "Authorization": "Bearer "
 }
 
 

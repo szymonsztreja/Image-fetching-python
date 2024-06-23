@@ -2,48 +2,48 @@ import csv
 from imdb import Cinemagoer
 import json
 
-def get_imdb_id(movie_title):
+def get_imdb_id(movie_list):
     ia = Cinemagoer()
+    movie_title = movie_list['title']
+    movie_date = movie_list['date']
     search_results = ia.search_movie(movie_title)
-    if search_results:
-        return search_results[0].movieID
+    
+    for movie in search_results:
+        if 'year' in movie.keys() and movie['year'] == movie_date:
+            return movie
     return None
 
-def read_csv_file(file_name):
-    move_list = []
-    with open(file_name, newline='') as csvfile:
-        # spamreader = csv.reader(csvfile, delimiter='')
-        for movie in csvfile:
-            move_list.append(movie.strip())
 
-    return move_list
-
-# def write_csv(file_path, data):
-#     with open(file_path, 'w', newline='') as csvfile:
-#         writer = csv.writer(csvfile)
-#         writer.writerow(["Title", "IMDb ID"])
-#         for row in data:
-#             writer.writerow(row)
+def read_json(file_name):
+    with open(file_name, 'r', encoding='utf-8') as file:
+        movies = json.load(file)
+    return movies
 
 
-def save_dataset(dataset, filename):
-    with open(filename, 'w') as f:
-        json.dump(dataset, f, indent=2)
+def save_json_dataset(dataset, filename):
+    with open(filename, 'w', encoding='utf-8') as f:
+        json.dump(dataset, f, indent=2, ensure_ascii=False)
 
 
-def new_csv(input_csv, output_csv):
-    movie_titles = read_csv_file(input_csv)
+def new_json(movies_json, output_json):
+    movies = read_json(movies_json)
     movies_with_ids = []
-    for title in movie_titles:
-        imdb_id = get_imdb_id(title)
+    for movie in movies:
+        title = movie['title']
+        date = movie['date']
+        imdb_id = get_imdb_id(movie)
         if imdb_id:
-            movies_with_ids.append({'title': title, 'imdb_id': imdb_id})
-        print(f"Processed: {title} -> {imdb_id}")
-    # write_csv(output_csv, movies_with_ids)
-    save_dataset(movies_with_ids, 'movies_with_imdb_ids.json')
+            movies_with_ids.append({'title': title, 'imdb_id': imdb_id.movieID})
+            try:
+                print(f"Processed: {title} -> {imdb_id}")
+            except UnicodeEncodeError:
+                print(f"Processed: {title.encode('utf-8')} -> {imdb_id}")
+        else:
+            print(f"No match for movie: {title} year: {date}")
+    save_json_dataset(movies_with_ids, output_json)
 
 
 if __name__ == "__main__":
-    input_csv = 'stopmotion.csv'
-    output_csv = 'movies_with_imdb_ids.csv'
-    new_csv(input_csv, output_csv)
+    movies_json = 'movies_title_date.json'
+    output_json = 'title_imdb_id.json'
+    new_json(movies_json, output_json)
